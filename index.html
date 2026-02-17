@@ -190,7 +190,10 @@
       background: var(--sage-pale); color: var(--sage-deep);
       font-size: 1.8rem; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
+      margin: 0 auto 16px; overflow: hidden;
+    }
+    .counselor-avatar img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
     }
     .counselor-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
     .counselor-title {
@@ -601,7 +604,7 @@
       </div>
       <div class="counselor-grid" style="grid-template-columns:1fr;max-width:420px;margin:0 auto;">
         <div class="counselor-card fade-up">
-          <div class="counselor-avatar">박</div>
+          <div class="counselor-avatar"><img src="counselor-park.jpg" alt="박규리 상담사"></div>
           <h3>박규리 상담사</h3>
           <p class="counselor-title">상담심리사</p>
           <div class="counselor-credentials">
@@ -706,36 +709,36 @@
       </div>
 
       <div class="test-tabs fade-up" id="testTabs">
-        <button class="test-tab active" data-test="phq9">&#128546; 우울증 (PHQ-9)</button>
-        <button class="test-tab" data-test="gad7">&#128560; 불안장애 (GAD-7)</button>
-        <button class="test-tab" data-test="pss">&#128548; 스트레스 (PSS-10)</button>
+        <button class="test-tab active" data-test="bdi2">&#128546; 우울증 (BDI-II)</button>
+        <button class="test-tab" data-test="bai">&#128560; 불안장애 (BAI)</button>
+        <button class="test-tab" data-test="pss">&#128548; 스트레스 (PSS-14)</button>
         <button class="test-tab" data-test="vark">&#128218; 학습유형 (VARK)</button>
         <button class="test-tab" data-test="sct">&#9997;&#65039; 문장완성 (SCT)</button>
       </div>
 
       <div class="test-container fade-up">
-        <div class="test-panel active" id="test-phq9">
+        <div class="test-panel active" id="test-bdi2">
           <div class="test-intro">
-            <h3>우울증 선별 검사 (PHQ-9)</h3>
-            <p>지난 2주 동안 아래의 증상이 얼마나 자주 있었는지 선택해 주세요.</p>
+            <h3>벡 우울 척도 (BDI-II)</h3>
+            <p>아래 각 항목에서 지난 2주간 자신의 상태를 가장 잘 나타내는 문장을 하나 선택해 주세요. (총 21문항)</p>
           </div>
-          <div id="phq9-questions"></div>
-          <button class="test-submit-btn" onclick="calculateScore('phq9')">결과 확인하기</button>
-          <div class="test-result" id="phq9-result"></div>
+          <div id="bdi2-questions"></div>
+          <button class="test-submit-btn" onclick="calculateScore('bdi2')">결과 확인하기</button>
+          <div class="test-result" id="bdi2-result"></div>
         </div>
-        <div class="test-panel" id="test-gad7">
+        <div class="test-panel" id="test-bai">
           <div class="test-intro">
-            <h3>불안장애 선별 검사 (GAD-7)</h3>
-            <p>지난 2주 동안 아래의 증상이 얼마나 자주 있었는지 선택해 주세요.</p>
+            <h3>벡 불안 척도 (BAI)</h3>
+            <p>지난 한 주 동안 아래의 증상이 얼마나 심했는지 선택해 주세요. (총 21문항)</p>
           </div>
-          <div id="gad7-questions"></div>
-          <button class="test-submit-btn" onclick="calculateScore('gad7')">결과 확인하기</button>
-          <div class="test-result" id="gad7-result"></div>
+          <div id="bai-questions"></div>
+          <button class="test-submit-btn" onclick="calculateScore('bai')">결과 확인하기</button>
+          <div class="test-result" id="bai-result"></div>
         </div>
         <div class="test-panel" id="test-pss">
           <div class="test-intro">
-            <h3>지각된 스트레스 척도 (PSS-10)</h3>
-            <p>지난 한 달 동안 아래의 상황이 얼마나 자주 있었는지 선택해 주세요.</p>
+            <h3>지각된 스트레스 척도 (PSS-14)</h3>
+            <p>지난 한 달 동안 아래의 상황이 얼마나 자주 있었는지 선택해 주세요. (총 14문항)</p>
           </div>
           <div id="pss-questions"></div>
           <button class="test-submit-btn" onclick="calculateScore('pss')">결과 확인하기</button>
@@ -866,63 +869,189 @@
   <script>
     // ===== TEST DATA =====
     var testData = {
-      phq9: {
-        title: '우울증 선별 검사 (PHQ-9)',
-        options: [
-          { value: 0, label: '전혀 없음' },
-          { value: 1, label: '며칠 동안' },
-          { value: 2, label: '일주일 이상' },
-          { value: 3, label: '거의 매일' }
-        ],
+      bdi2: {
+        title: '벡 우울 척도 (BDI-II)',
+        questionType: 'individual',
         questions: [
-          '일을 하는 것에 대한 흥미나 즐거움을 느끼지 못함',
-          '기분이 가라앉거나, 우울하거나, 희망이 없다고 느낌',
-          '잠이 들거나 계속 잠을 자는 것이 어렵거나, 너무 많이 잠',
-          '피곤하다고 느끼거나 기운이 거의 없음',
-          '입맛이 없거나 과식을 함',
-          '자신을 부정적으로 봄 — 혹은 자신이 실패자라고 느끼거나 자신 또는 가족을 실망시킴',
-          '신문을 읽거나 텔레비전 보는 것과 같은 일에 집중하기 어려움',
-          '다른 사람들이 주목할 정도로 너무 느리게 움직이거나 말을 함, 또는 반대로 너무 안절부절 못함',
-          '자신이 죽는 것이 더 낫다고 생각하거나 어떤 식으로든 자해를 하려는 생각'
+          { text: '슬픔', options: [
+            { value: 0, label: '나는 슬프지 않다' },
+            { value: 1, label: '나는 자주 슬프다' },
+            { value: 2, label: '나는 항상 슬프다' },
+            { value: 3, label: '나는 너무 슬프거나 불행해서 견딜 수 없다' }
+          ]},
+          { text: '비관', options: [
+            { value: 0, label: '나는 미래에 대해 특별히 비관적이지 않다' },
+            { value: 1, label: '나는 전보다 미래에 대해 비관적이다' },
+            { value: 2, label: '나는 일이 잘 되리라고 기대하지 않는다' },
+            { value: 3, label: '나는 미래가 희망이 없고 더 나빠질 것만 같다' }
+          ]},
+          { text: '과거 실패감', options: [
+            { value: 0, label: '나는 실패자라고 느끼지 않는다' },
+            { value: 1, label: '나는 예전보다 더 많이 실패했다' },
+            { value: 2, label: '돌이켜보면 실패가 너무 많았다' },
+            { value: 3, label: '나는 인간으로서 완전한 실패자라고 느낀다' }
+          ]},
+          { text: '즐거움 상실', options: [
+            { value: 0, label: '나는 전과 다름없이 즐겁다' },
+            { value: 1, label: '나는 전만큼 즐겁지 않다' },
+            { value: 2, label: '나는 어떤 일에서도 즐거움을 느끼기 어렵다' },
+            { value: 3, label: '나는 모든 것이 불만스럽고 지루하다' }
+          ]},
+          { text: '죄책감', options: [
+            { value: 0, label: '나는 특별히 죄책감을 느끼지 않는다' },
+            { value: 1, label: '나는 했거나 했어야 할 일에 대해 죄책감을 느낀다' },
+            { value: 2, label: '나는 꽤 자주 죄책감을 느낀다' },
+            { value: 3, label: '나는 항상 죄책감을 느낀다' }
+          ]},
+          { text: '벌 받는 느낌', options: [
+            { value: 0, label: '나는 벌을 받고 있다고 느끼지 않는다' },
+            { value: 1, label: '나는 벌을 받을지도 모른다고 느낀다' },
+            { value: 2, label: '나는 벌을 받을 것으로 예상한다' },
+            { value: 3, label: '나는 벌을 받고 있다고 느낀다' }
+          ]},
+          { text: '자기 불만', options: [
+            { value: 0, label: '나는 자신에 대해 평소와 같이 느낀다' },
+            { value: 1, label: '나는 자신에 대한 신뢰를 잃었다' },
+            { value: 2, label: '나는 자신에게 실망했다' },
+            { value: 3, label: '나는 자신이 싫다' }
+          ]},
+          { text: '자기 비판', options: [
+            { value: 0, label: '나는 전보다 자신을 더 비판하지 않는다' },
+            { value: 1, label: '나는 전보다 자신에게 더 비판적이다' },
+            { value: 2, label: '나는 나의 모든 잘못에 대해 자신을 비판한다' },
+            { value: 3, label: '일어나는 모든 나쁜 일에 대해 내 탓이라고 비판한다' }
+          ]},
+          { text: '자살 사고', options: [
+            { value: 0, label: '나는 자살에 대한 생각이 전혀 없다' },
+            { value: 1, label: '나는 자살에 대한 생각이 있지만 실행하지는 않을 것이다' },
+            { value: 2, label: '나는 자살하고 싶다' },
+            { value: 3, label: '기회가 있으면 자살하겠다' }
+          ]},
+          { text: '울음', options: [
+            { value: 0, label: '나는 전보다 더 울지는 않는다' },
+            { value: 1, label: '나는 전보다 더 많이 운다' },
+            { value: 2, label: '나는 사소한 일에도 운다' },
+            { value: 3, label: '나는 울고 싶지만 울 수조차 없다' }
+          ]},
+          { text: '초조', options: [
+            { value: 0, label: '나는 평소보다 더 초조하지 않다' },
+            { value: 1, label: '나는 평소보다 더 초조하다' },
+            { value: 2, label: '나는 너무 초조해서 가만히 있기 어렵다' },
+            { value: 3, label: '나는 너무 초조해서 계속 움직이거나 무언가를 해야 한다' }
+          ]},
+          { text: '흥미 상실', options: [
+            { value: 0, label: '나는 다른 사람이나 활동에 대한 관심을 잃지 않았다' },
+            { value: 1, label: '나는 전보다 다른 사람이나 일에 관심이 줄었다' },
+            { value: 2, label: '나는 다른 사람이나 일에 대한 관심이 거의 없어졌다' },
+            { value: 3, label: '나는 어떤 것에도 관심을 갖기 어렵다' }
+          ]},
+          { text: '우유부단', options: [
+            { value: 0, label: '나는 결정을 잘 내리는 편이다' },
+            { value: 1, label: '나는 전보다 결정 내리기가 어렵다' },
+            { value: 2, label: '나는 전보다 결정 내리기가 훨씬 어렵다' },
+            { value: 3, label: '나는 어떤 결정도 내리기 어렵다' }
+          ]},
+          { text: '무가치감', options: [
+            { value: 0, label: '나는 가치 없는 사람이라고 느끼지 않는다' },
+            { value: 1, label: '나는 전만큼 가치 있고 유용한 사람이라고 느끼지 못한다' },
+            { value: 2, label: '나는 다른 사람보다 가치가 없다고 느낀다' },
+            { value: 3, label: '나는 완전히 가치 없는 사람이라고 느낀다' }
+          ]},
+          { text: '활력 상실', options: [
+            { value: 0, label: '나는 평소처럼 활력이 있다' },
+            { value: 1, label: '나는 전보다 활력이 줄었다' },
+            { value: 2, label: '나는 많은 일을 하기에 활력이 부족하다' },
+            { value: 3, label: '나는 아무 일도 할 수 없을 정도로 활력이 없다' }
+          ]},
+          { text: '수면 변화', options: [
+            { value: 0, label: '수면 습관에 변화가 없다' },
+            { value: 1, label: '전보다 약간 더 많이 또는 적게 잔다' },
+            { value: 2, label: '전보다 훨씬 더 많이 또는 적게 잔다' },
+            { value: 3, label: '거의 하루 종일 자거나, 1-2시간 일찍 깨서 다시 잠들 수 없다' }
+          ]},
+          { text: '짜증', options: [
+            { value: 0, label: '나는 평소보다 더 짜증을 내지 않는다' },
+            { value: 1, label: '나는 평소보다 더 짜증이 난다' },
+            { value: 2, label: '나는 평소보다 훨씬 더 짜증이 난다' },
+            { value: 3, label: '나는 항상 짜증이 난다' }
+          ]},
+          { text: '식욕 변화', options: [
+            { value: 0, label: '식욕에 변화가 없다' },
+            { value: 1, label: '전보다 식욕이 약간 줄었거나 늘었다' },
+            { value: 2, label: '전보다 식욕이 많이 줄었거나 늘었다' },
+            { value: 3, label: '전혀 식욕이 없거나 항상 음식이 먹고 싶다' }
+          ]},
+          { text: '집중력 저하', options: [
+            { value: 0, label: '나는 전과 다름없이 집중할 수 있다' },
+            { value: 1, label: '나는 전만큼 집중하기 어렵다' },
+            { value: 2, label: '나는 어떤 것에도 오래 집중하기 어렵다' },
+            { value: 3, label: '나는 아무것에도 집중할 수 없다' }
+          ]},
+          { text: '피로', options: [
+            { value: 0, label: '나는 평소보다 더 피곤하지 않다' },
+            { value: 1, label: '나는 전보다 쉽게 피곤해진다' },
+            { value: 2, label: '나는 이전에 할 수 있었던 많은 일을 하기에 너무 피곤하다' },
+            { value: 3, label: '나는 이전에 할 수 있었던 대부분의 일을 하기에 너무 피곤하다' }
+          ]},
+          { text: '성적 흥미 상실', options: [
+            { value: 0, label: '성에 대한 관심에 변화가 없다' },
+            { value: 1, label: '성에 대한 관심이 전보다 줄었다' },
+            { value: 2, label: '성에 대한 관심이 많이 줄었다' },
+            { value: 3, label: '성에 대한 관심을 완전히 잃었다' }
+          ]}
         ],
-        maxScore: 27,
+        maxScore: 63,
+        suicideItemIndex: 8,
         reverseItems: [],
         scoring: [
-          { max: 4, level: '정상', color: 'var(--level-normal)', desc: '현재 우울 증상이 거의 없는 상태입니다.', rec: '현재 심리 상태가 양호합니다. 꾸준한 자기 관리를 유지하세요.' },
-          { max: 9, level: '경미한 우울', color: 'var(--level-mild)', desc: '가벼운 우울감이 있을 수 있습니다.', rec: '규칙적인 운동, 충분한 수면, 사회적 교류가 도움됩니다. 증상이 지속되면 전문 상담을 고려해보세요.' },
-          { max: 14, level: '중간 정도 우울', color: 'var(--level-moderate)', desc: '일상생활에 영향을 줄 수 있는 수준의 우울감입니다.', rec: '전문 상담을 받아보시는 것을 권장합니다. 마음숲 상담사와의 상담이 도움이 될 수 있습니다.' },
-          { max: 19, level: '중간 심한 우울', color: 'var(--level-severe)', desc: '상당한 수준의 우울 증상이 있습니다.', rec: '전문적인 상담 및 치료가 필요합니다. 가까운 정신건강복지센터 또는 전문 의료기관 방문을 권장합니다.' },
-          { max: 27, level: '심한 우울', color: 'var(--level-severe)', desc: '심각한 수준의 우울 증상입니다.', rec: '즉각적인 전문적 도움이 필요합니다. 가까운 정신건강복지센터나 응급실을 방문해 주세요.' }
+          { max: 13, level: '정상', color: 'var(--level-normal)', desc: '현재 우울 증상이 거의 없는 상태입니다.', rec: '현재 심리 상태가 양호합니다. 꾸준한 자기 관리를 유지하세요.' },
+          { max: 19, level: '경미한 우울', color: 'var(--level-mild)', desc: '가벼운 우울감이 있을 수 있습니다.', rec: '규칙적인 운동, 충분한 수면, 사회적 교류가 도움됩니다. 증상이 지속되면 전문 상담을 고려해보세요.' },
+          { max: 28, level: '중간 정도 우울', color: 'var(--level-moderate)', desc: '일상생활에 영향을 줄 수 있는 수준의 우울감입니다.', rec: '전문 상담을 받아보시는 것을 권장합니다. 마음숲 상담사와의 상담이 도움이 될 수 있습니다.' },
+          { max: 63, level: '심한 우울', color: 'var(--level-severe)', desc: '심각한 수준의 우울 증상입니다. 즉각적인 전문적 도움이 필요합니다.', rec: '전문적인 상담 및 치료가 반드시 필요합니다. 가까운 정신건강복지센터 또는 정신건강의학과 방문을 강력히 권장합니다.' }
         ]
       },
-      gad7: {
-        title: '불안장애 선별 검사 (GAD-7)',
+      bai: {
+        title: '벡 불안 척도 (BAI)',
         options: [
-          { value: 0, label: '전혀 없음' },
-          { value: 1, label: '며칠 동안' },
-          { value: 2, label: '일주일 이상' },
-          { value: 3, label: '거의 매일' }
+          { value: 0, label: '전혀 느끼지 않았다' },
+          { value: 1, label: '약간 느꼈다' },
+          { value: 2, label: '상당히 느꼈다' },
+          { value: 3, label: '심하게 느꼈다' }
         ],
         questions: [
-          '초조하거나 불안하거나 조마조마하게 느낌',
-          '걱정하는 것을 멈추거나 조절할 수가 없음',
-          '여러 가지 것들에 대해 걱정을 너무 많이 함',
-          '편하게 쉬는 것이 어려움',
-          '너무 안절부절 못해서 가만히 있기가 어려움',
-          '쉽게 짜증이 나거나 화가 남',
-          '마치 끔찍한 일이 생길 것처럼 두려움을 느낌'
+          '몸이나 손발이 저리고 감각이 둔해짐',
+          '뜨거움을 느낌 (열감)',
+          '다리가 떨리거나 후들거림',
+          '편안하게 긴장을 풀 수 없음',
+          '최악의 상황이 일어날 것 같은 두려움',
+          '어지러움 또는 현기증',
+          '심장이 두근거리거나 빠르게 뜀',
+          '차분하지 못하고 안절부절 못함',
+          '겁이 남 (두려움을 느낌)',
+          '신경이 예민하고 과민함',
+          '숨이 막히는 느낌',
+          '손이 떨림',
+          '몸 전체가 떨림',
+          '자제력을 잃을 것 같은 두려움',
+          '숨쉬기가 어려움 (호흡 곤란)',
+          '죽을 것 같은 두려움',
+          '무서움을 느낌',
+          '소화가 안 되거나 뱃속이 불편함',
+          '기절할 것 같은 느낌',
+          '얼굴이 붉어지거나 달아오름',
+          '식은땀이 남 (더위와 관계없이)'
         ],
-        maxScore: 21,
+        maxScore: 63,
         reverseItems: [],
         scoring: [
-          { max: 4, level: '정상', color: 'var(--level-normal)', desc: '현재 불안 증상이 거의 없는 상태입니다.', rec: '현재 심리 상태가 양호합니다. 스트레스 관리를 꾸준히 유지하세요.' },
-          { max: 9, level: '경미한 불안', color: 'var(--level-mild)', desc: '가벼운 불안 증상이 있을 수 있습니다.', rec: '이완 훈련, 심호흡, 규칙적인 운동이 도움됩니다. 증상이 지속되면 상담을 고려해보세요.' },
-          { max: 14, level: '중간 정도 불안', color: 'var(--level-moderate)', desc: '일상생활에 영향을 줄 수 있는 수준의 불안입니다.', rec: '전문 상담을 받아보시는 것을 권장합니다. 인지행동치료가 효과적일 수 있습니다.' },
-          { max: 21, level: '심한 불안', color: 'var(--level-severe)', desc: '심각한 수준의 불안 증상입니다.', rec: '전문적인 상담 및 치료가 필요합니다. 정신건강의학과 방문을 권장합니다.' }
+          { max: 7, level: '정상', color: 'var(--level-normal)', desc: '현재 불안 증상이 거의 없는 상태입니다.', rec: '현재 심리 상태가 양호합니다. 스트레스 관리를 꾸준히 유지하세요.' },
+          { max: 15, level: '경미한 불안', color: 'var(--level-mild)', desc: '가벼운 불안 증상이 있을 수 있습니다.', rec: '이완 훈련, 심호흡, 규칙적인 운동이 도움됩니다. 증상이 지속되면 상담을 고려해보세요.' },
+          { max: 25, level: '중간 정도 불안', color: 'var(--level-moderate)', desc: '일상생활에 영향을 줄 수 있는 수준의 불안입니다.', rec: '전문 상담을 받아보시는 것을 권장합니다. 인지행동치료가 효과적일 수 있습니다.' },
+          { max: 63, level: '심한 불안', color: 'var(--level-severe)', desc: '심각한 수준의 불안 증상입니다.', rec: '전문적인 상담 및 치료가 필요합니다. 정신건강의학과 방문을 권장합니다.' }
         ]
       },
       pss: {
-        title: '지각된 스트레스 척도 (PSS-10)',
+        title: '지각된 스트레스 척도 (PSS-14)',
         options: [
           { value: 0, label: '전혀 없었다' },
           { value: 1, label: '거의 없었다' },
@@ -934,20 +1063,24 @@
           '예상치 못한 일이 생겨서 기분이 상한 적이 얼마나 있었습니까?',
           '중요한 일들을 통제할 수 없다고 느낀 적이 얼마나 있었습니까?',
           '초조하거나 스트레스를 받았다고 느낀 적이 얼마나 있었습니까?',
-          '개인적인 문제를 다루는 능력에 대해 자신감을 느낀 적이 얼마나 있었습니까?',
+          '개인적인 문제를 성공적으로 다룬 적이 얼마나 있었습니까?',
           '일들이 자신의 뜻대로 진행되고 있다고 느낀 적이 얼마나 있었습니까?',
           '해야 할 일들을 감당할 수 없다고 느낀 적이 얼마나 있었습니까?',
           '일상에서 짜증나는 일을 잘 다스릴 수 있었던 적이 얼마나 있었습니까?',
           '모든 것이 잘 되어가고 있다고 느낀 적이 얼마나 있었습니까?',
           '자신이 통제할 수 없는 일 때문에 화가 난 적이 얼마나 있었습니까?',
-          '어려운 일들이 너무 많이 쌓여서 극복할 수 없다고 느낀 적이 얼마나 있었습니까?'
+          '어려운 일들이 너무 많이 쌓여서 극복할 수 없다고 느낀 적이 얼마나 있었습니까?',
+          '시간을 어떻게 보낼지 스스로 조절할 수 있다고 느낀 적이 얼마나 있었습니까?',
+          '신경 써야 할 일들이 너무 많다고 느낀 적이 얼마나 있었습니까?',
+          '여가 시간을 즐기고 있다고 느낀 적이 얼마나 있었습니까?',
+          '일상의 문제와 짜증에 효과적으로 대처한 적이 얼마나 있었습니까?'
         ],
-        maxScore: 40,
-        reverseItems: [3, 4, 6, 7],
+        maxScore: 56,
+        reverseItems: [3, 4, 6, 7, 10, 12, 13],
         scoring: [
-          { max: 13, level: '낮은 스트레스', color: 'var(--level-normal)', desc: '스트레스 수준이 낮은 상태입니다.', rec: '현재의 스트레스 관리 방법을 잘 유지하고 계십니다. 꾸준히 자기 관리를 해주세요.' },
-          { max: 26, level: '보통 스트레스', color: 'var(--level-mild)', desc: '일반적인 수준의 스트레스를 경험하고 있습니다.', rec: '적절한 스트레스 해소 활동(운동, 취미, 휴식)을 통해 관리해보세요. 필요시 상담을 받아보시는 것도 좋습니다.' },
-          { max: 40, level: '높은 스트레스', color: 'var(--level-severe)', desc: '높은 수준의 스트레스를 경험하고 있습니다.', rec: '전문 상담을 통해 스트레스 대처 전략을 배워보시는 것을 권장합니다. 마음숲 상담사에게 문의해보세요.' }
+          { max: 18, level: '낮은 스트레스', color: 'var(--level-normal)', desc: '스트레스 수준이 낮은 상태입니다.', rec: '현재의 스트레스 관리 방법을 잘 유지하고 계십니다. 꾸준히 자기 관리를 해주세요.' },
+          { max: 36, level: '보통 스트레스', color: 'var(--level-mild)', desc: '일반적인 수준의 스트레스를 경험하고 있습니다.', rec: '적절한 스트레스 해소 활동(운동, 취미, 휴식)을 통해 관리해보세요. 필요시 상담을 받아보시는 것도 좋습니다.' },
+          { max: 56, level: '높은 스트레스', color: 'var(--level-severe)', desc: '높은 수준의 스트레스를 경험하고 있습니다.', rec: '전문 상담을 통해 스트레스 대처 전략을 배워보시는 것을 권장합니다. 마음숲 상담사에게 문의해보세요.' }
         ]
       }
     };
@@ -1062,6 +1195,42 @@
             { type: 'R', label: '노트를 다시 읽거나 요약본을 작성' },
             { type: 'K', label: '관련 문제를 풀거나 실습을 반복' }
           ]
+        },
+        {
+          text: '중요한 내용을 오래 기억하기 위한 방법은?',
+          options: [
+            { type: 'V', label: '이미지나 색깔과 연결하여 기억' },
+            { type: 'A', label: '반복해서 소리 내어 읽거나 노래로 만듦' },
+            { type: 'R', label: '여러 번 써보면서 외움' },
+            { type: 'K', label: '몸으로 동작을 만들어 기억' }
+          ]
+        },
+        {
+          text: '새로운 기술(요리, 운전 등)을 배울 때?',
+          options: [
+            { type: 'V', label: '동영상이나 시범을 먼저 봄' },
+            { type: 'A', label: '누군가의 설명을 들으며 이해' },
+            { type: 'R', label: '레시피나 매뉴얼을 먼저 꼼꼼히 읽음' },
+            { type: 'K', label: '일단 직접 시도하면서 배움' }
+          ]
+        },
+        {
+          text: '강의 중 집중이 떨어질 때 다시 집중하는 방법은?',
+          options: [
+            { type: 'V', label: '칠판이나 PPT를 유심히 바라봄' },
+            { type: 'A', label: '교수님 말에 귀를 기울이며 핵심을 찾음' },
+            { type: 'R', label: '노트 필기를 하면서 다시 집중' },
+            { type: 'K', label: '자세를 바꾸거나 스트레칭으로 각성' }
+          ]
+        },
+        {
+          text: '시험 직전 마지막으로 하는 복습 방법은?',
+          options: [
+            { type: 'V', label: '정리한 도표나 그래프를 훑어봄' },
+            { type: 'A', label: '핵심 내용을 중얼거리며 최종 확인' },
+            { type: 'R', label: '요약 노트를 빠르게 다시 읽음' },
+            { type: 'K', label: '주요 문제를 손으로 풀어봄' }
+          ]
         }
       ],
       types: {
@@ -1129,12 +1298,17 @@
       var test = testData[testId];
       var container = document.getElementById(testId + '-questions');
       var html = '';
+      var isIndividual = test.questionType === 'individual';
+
       for (var i = 0; i < test.questions.length; i++) {
+        var qText = isIndividual ? test.questions[i].text : test.questions[i];
+        var opts = isIndividual ? test.questions[i].options : test.options;
+
         html += '<div class="question-card" data-index="' + i + '">';
-        html += '<div class="question-text"><span class="question-number">' + (i + 1) + '</span>' + test.questions[i] + '</div>';
+        html += '<div class="question-text"><span class="question-number">' + (i + 1) + '</span>' + qText + '</div>';
         html += '<div class="answer-options">';
-        for (var j = 0; j < test.options.length; j++) {
-          html += '<button type="button" class="answer-btn" data-value="' + test.options[j].value + '" onclick="selectAnswer(this)">' + test.options[j].label + '</button>';
+        for (var j = 0; j < opts.length; j++) {
+          html += '<button type="button" class="answer-btn" data-value="' + opts[j].value + '" onclick="selectAnswer(this)">' + opts[j].label + '</button>';
         }
         html += '</div></div>';
       }
@@ -1166,12 +1340,13 @@
       btn.classList.add('selected');
     }
 
-    // ===== CALCULATE SCORE (PHQ-9, GAD-7, PSS) =====
+    // ===== CALCULATE SCORE (BDI-II, BAI, PSS-14) =====
     function calculateScore(testId) {
       var test = testData[testId];
       var cards = document.querySelectorAll('#test-' + testId + ' .question-card');
+      var qLen = test.questionType === 'individual' ? test.questions.length : test.questions.length;
       var total = 0;
-      var phq9Item9 = 0;
+      var suicideItemValue = 0;
 
       for (var i = 0; i < cards.length; i++) {
         var selected = cards[i].querySelector('.answer-btn.selected');
@@ -1186,7 +1361,10 @@
           value = (testId === 'pss' ? 4 : 3) - value;
         }
 
-        if (testId === 'phq9' && i === 8) { phq9Item9 = parseInt(selected.dataset.value); }
+        // BDI-II 자살 사고 문항 (9번, index 8)
+        if (test.suicideItemIndex !== undefined && i === test.suicideItemIndex) {
+          suicideItemValue = parseInt(selected.dataset.value);
+        }
         total += value;
       }
 
@@ -1198,11 +1376,11 @@
         }
       }
 
-      showResult(testId, total, test.maxScore, level, phq9Item9);
+      showResult(testId, total, test.maxScore, level, suicideItemValue);
     }
 
     // ===== SHOW RESULT =====
-    function showResult(testId, total, maxScore, level, phq9Item9) {
+    function showResult(testId, total, maxScore, level, suicideItemValue) {
       var resultDiv = document.getElementById(testId + '-result');
       var pct = Math.round((total / maxScore) * 100);
 
@@ -1213,7 +1391,7 @@
       html += '<div class="result-desc">' + level.desc + '</div>';
       html += '<div class="result-recommendation"><p>&#128161; <strong>추천:</strong> ' + level.rec + '</p></div>';
 
-      if (testId === 'phq9' && phq9Item9 >= 1) {
+      if (testId === 'bdi2' && suicideItemValue >= 1) {
         html += '<div class="result-warning"><p><strong>&#128680; 긴급 안내:</strong> 자해에 대한 생각이 있으신 경우, 즉시 전문 도움을 받으시기 바랍니다.<br>';
         html += '&#128222; <strong>자살예방상담전화: 1393</strong> (24시간)<br>';
         html += '&#128222; <strong>정신건강위기상담전화: 1577-0199</strong></p></div>';
@@ -1260,7 +1438,7 @@
       var resultDiv = document.getElementById('vark-result');
       var mainInfo = varkData.types[mainType];
       var subInfo = varkData.types[subType];
-      var maxPossible = 12;
+      var maxPossible = 16;
 
       var html = '<div class="result-score" style="color:' + mainInfo.color + '">' + mainInfo.icon + '</div>';
       html += '<div class="result-level" style="color:' + mainInfo.color + '">' + mainInfo.name + '</div>';
@@ -1503,8 +1681,8 @@
     }
 
     // ===== INIT: Render all test questions =====
-    renderQuestions('phq9');
-    renderQuestions('gad7');
+    renderQuestions('bdi2');
+    renderQuestions('bai');
     renderQuestions('pss');
     renderVarkQuestions();
     renderSctQuestions();
