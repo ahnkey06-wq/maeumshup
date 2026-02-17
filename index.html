@@ -363,6 +363,35 @@
       list-style: disc;
     }
 
+    /* ===== SCT (문장완성검사) ===== */
+    .sct-item {
+      background: white; border-radius: var(--radius);
+      padding: 20px 24px; margin-bottom: 12px;
+      box-shadow: var(--shadow-soft);
+    }
+    .sct-stem {
+      font-size: 0.95rem; font-weight: 600; color: var(--sage-deep);
+      margin-bottom: 10px; display: block; line-height: 1.6;
+    }
+    .sct-item textarea {
+      width: 100%; min-height: 56px; padding: 10px 14px;
+      border: 1px solid #e0e0e0; border-radius: var(--radius-sm);
+      font-size: 0.9rem; resize: vertical; background: var(--cream);
+      font-family: 'Noto Sans KR', sans-serif; line-height: 1.7;
+      transition: var(--transition);
+    }
+    .sct-item textarea:focus {
+      border-color: var(--sage); background: white;
+      box-shadow: 0 0 0 3px rgba(127,166,139,0.15); outline: none;
+    }
+    .sct-submit-area { margin-top: 24px; }
+    .sct-submit-area .form-group { margin-bottom: 16px; max-width: 300px; }
+    .sct-progress {
+      font-size: 0.85rem; color: var(--text-light); text-align: right;
+      margin-bottom: 16px;
+    }
+    .sct-progress strong { color: var(--sage-deep); }
+
     /* ===== BOOKING ===== */
     #booking { background: var(--cream); }
     .booking-form {
@@ -646,6 +675,17 @@
           </ul>
           <a href="#booking" class="program-cta">예약하기</a>
         </div>
+        <div class="program-card">
+          <div class="program-icon">&#129504;</div>
+          <h3>심리검사 해석 상담</h3>
+          <p class="program-desc">MMPI-2(다면적 인성검사), TCI(기질 및 성격검사) 등 전문 심리검사 결과를 상담사와 함께 해석합니다. 검사 결과에 대한 이해를 돕고, 맞춤 상담 방향을 설정합니다.</p>
+          <ul class="program-details">
+            <li>&#128336; 60분 / 회기</li>
+            <li>&#128187; 화상 상담</li>
+            <li>&#128176; 100,000원~ / 회기 (검사비 별도)</li>
+          </ul>
+          <a href="#booking" class="program-cta">예약하기</a>
+        </div>
       </div>
     </div>
   </section>
@@ -670,6 +710,7 @@
         <button class="test-tab" data-test="gad7">&#128560; 불안장애 (GAD-7)</button>
         <button class="test-tab" data-test="pss">&#128548; 스트레스 (PSS-10)</button>
         <button class="test-tab" data-test="vark">&#128218; 학습유형 (VARK)</button>
+        <button class="test-tab" data-test="sct">&#9997;&#65039; 문장완성 (SCT)</button>
       </div>
 
       <div class="test-container fade-up">
@@ -708,6 +749,22 @@
           <div id="vark-questions"></div>
           <button class="test-submit-btn" onclick="calculateVark()">결과 확인하기</button>
           <div class="test-result" id="vark-result"></div>
+        </div>
+        <div class="test-panel" id="test-sct">
+          <div class="test-intro">
+            <h3>문장완성검사 (SCT)</h3>
+            <p>아래 문장의 시작 부분을 읽고, 떠오르는 대로 자유롭게 완성해 주세요. 정답이 없으니 편안하게 작성하시면 됩니다. 작성하신 내용은 상담사에게 전달되어 해석 상담에 활용됩니다.</p>
+          </div>
+          <div class="sct-progress" id="sctProgress">작성: <strong>0</strong> / 30</div>
+          <div id="sct-questions"></div>
+          <div class="sct-submit-area">
+            <div class="form-group">
+              <label class="form-label">이름 *</label>
+              <input type="text" id="sctName" placeholder="홍길동">
+            </div>
+            <button class="test-submit-btn" onclick="submitSct()">&#128228; 검사 결과 제출하기</button>
+          </div>
+          <div class="test-result" id="sct-result"></div>
         </div>
       </div>
     </div>
@@ -1330,11 +1387,127 @@
     }, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
     fadeEls.forEach(function(el) { observer.observe(el); });
 
+    // ===== SCT DATA =====
+    var sctData = {
+      questions: [
+        // 자기 인식 (8문항)
+        '나는',
+        '내가 가장 좋아하는 것은',
+        '나의 장점은',
+        '나의 단점은',
+        '나의 꿈은',
+        '나는 가끔',
+        '사람들이 나를',
+        '내가 가장 두려운 것은',
+        // 대인관계 (7문항)
+        '친구들은',
+        '다른 사람들이',
+        '내가 가장 좋아하는 사람은',
+        '사람들과 함께 있을 때',
+        '나를 화나게 하는 것은',
+        '이성에 대해',
+        '혼자 있을 때 나는',
+        // 가족 (5문항)
+        '우리 가족은',
+        '어머니는',
+        '아버지는',
+        '어린 시절 나는',
+        '우리 집은',
+        // 학업/진로 (5문항)
+        '공부할 때 나는',
+        '학교에서',
+        '내 미래는',
+        '시험을 볼 때',
+        '졸업 후에',
+        // 정서/심리 (5문항)
+        '내가 가장 행복했던 때는',
+        '내가 가장 슬펐던 때는',
+        '스트레스를 받으면',
+        '밤에 잠이 안 올 때',
+        '내가 바꾸고 싶은 것은'
+      ]
+    };
+
+    // ===== RENDER SCT =====
+    function renderSctQuestions() {
+      var container = document.getElementById('sct-questions');
+      var html = '';
+      for (var i = 0; i < sctData.questions.length; i++) {
+        html += '<div class="sct-item">';
+        html += '<span class="sct-stem"><span class="question-number">' + (i + 1) + '</span>' + sctData.questions[i] + '...</span>';
+        html += '<textarea id="sct-a-' + i + '" placeholder="자유롭게 완성해 주세요..." oninput="updateSctProgress()"></textarea>';
+        html += '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    function updateSctProgress() {
+      var filled = 0;
+      for (var i = 0; i < sctData.questions.length; i++) {
+        var ta = document.getElementById('sct-a-' + i);
+        if (ta && ta.value.trim() !== '') filled++;
+      }
+      document.getElementById('sctProgress').innerHTML = '작성: <strong>' + filled + '</strong> / ' + sctData.questions.length;
+    }
+
+    // ===== SUBMIT SCT =====
+    function submitSct() {
+      var name = document.getElementById('sctName').value.trim();
+      if (!name) {
+        alert('이름을 입력해 주세요.');
+        document.getElementById('sctName').focus();
+        return;
+      }
+      var responses = {};
+      var filled = 0;
+      for (var i = 0; i < sctData.questions.length; i++) {
+        var val = document.getElementById('sct-a-' + i).value.trim();
+        if (val) {
+          responses[sctData.questions[i]] = val;
+          filled++;
+        }
+      }
+      if (filled < 20) {
+        alert('최소 20개 이상의 문장을 완성해 주세요. (현재 ' + filled + '개 작성)');
+        return;
+      }
+      var SCRIPT_URL = 'PLACEHOLDER_URL';
+      var payload = {
+        type: 'sct',
+        name: name,
+        timestamp: new Date().toLocaleString('ko-KR'),
+        filledCount: filled,
+        responses: JSON.stringify(responses)
+      };
+      var btn = document.querySelector('#test-sct .test-submit-btn');
+      btn.disabled = true;
+      btn.textContent = '제출 중...';
+      fetch(SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function() {
+        var resultDiv = document.getElementById('sct-result');
+        resultDiv.innerHTML = '<div style="text-align:center;padding:24px;">' +
+          '<div style="font-size:2.5rem;margin-bottom:12px;">&#127807;</div>' +
+          '<div class="result-level" style="color:var(--sage-deep)">검사가 제출되었습니다</div>' +
+          '<div class="result-desc">문장완성검사가 성공적으로 전달되었습니다.<br>상담사가 결과를 분석한 후 연락드리겠습니다.</div>' +
+          '<div class="result-recommendation"><p>&#128161; SCT 결과는 상담사와의 해석 상담을 통해 더 깊이 이해할 수 있습니다. 심리검사 해석 상담을 예약해 보세요.</p></div>' +
+          '<a href="#booking" class="result-cta">&#129504; 해석 상담 예약하기</a></div>';
+        resultDiv.classList.add('show');
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      })
+      .catch(function() { alert('제출에 실패했습니다. 다시 시도해주세요.'); })
+      .finally(function() { btn.disabled = false; btn.textContent = '\uD83D\uDCE4 검사 결과 제출하기'; });
+    }
+
     // ===== INIT: Render all test questions =====
     renderQuestions('phq9');
     renderQuestions('gad7');
     renderQuestions('pss');
     renderVarkQuestions();
+    renderSctQuestions();
 
   </script>
 </body>
