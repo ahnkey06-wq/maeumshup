@@ -444,6 +444,15 @@
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .payment-info { margin-top: 32px; padding-top: 28px; border-top: 2px solid rgba(127,166,139,0.2); }
+    .payment-title { font-size: 1.1rem; font-weight: 600; color: var(--sage-deep); margin-bottom: 16px; }
+    .payment-box { background: white; border-radius: var(--radius-sm); padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 3px solid var(--sage); }
+    .payment-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+    .payment-row:last-child { border-bottom: none; }
+    .payment-label { font-size: 0.9rem; color: var(--text-light); width: 80px; flex-shrink: 0; font-weight: 500; }
+    .payment-value { font-size: 0.95rem; color: var(--text); font-weight: 500; }
+    .account-number { font-size: 1.05rem; font-weight: 700; color: var(--sage-deep); letter-spacing: 0.5px; }
+    .payment-note { margin-top: 12px; font-size: 0.85rem; color: var(--text-light); }
     .booking-admin { margin-top: 40px; padding-top: 32px; border-top: 2px solid rgba(127,166,139,0.2); }
     .admin-title { font-size: 1.1rem; font-weight: 600; color: var(--sage-deep); margin-bottom: 16px; }
     .admin-login { display: flex; gap: 8px; align-items: center; }
@@ -853,6 +862,15 @@
           <button type="submit" class="booking-submit" id="bookingSubmit">&#128231; 상담 예약 신청하기</button>
         </form>
         <div id="bookingResult"></div>
+        <div class="payment-info">
+          <h3 class="payment-title">&#128179; 상담료 입금 안내</h3>
+          <div class="payment-box">
+            <div class="payment-row"><span class="payment-label">은행</span><span class="payment-value">신한은행</span></div>
+            <div class="payment-row"><span class="payment-label">예금주</span><span class="payment-value">박규리</span></div>
+            <div class="payment-row"><span class="payment-label">계좌번호</span><span class="payment-value account-number">110-321-053463</span></div>
+          </div>
+          <p class="payment-note">※ 예약 후 상담료를 입금해 주시면 확정됩니다.</p>
+        </div>
         <div class="booking-admin" id="bookingAdmin">
           <h3 class="admin-title">&#128274; 예약 내역 조회 (관리자 전용)</h3>
           <div class="admin-login" id="bookingAdminLogin">
