@@ -444,6 +444,97 @@
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    /* ===== CALENDAR ===== */
+    .calendar-wrapper {
+      margin-top: 8px; background: white; border-radius: var(--radius-sm);
+      padding: 20px; border: 1px solid #e0e0e0;
+    }
+    .calendar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .calendar-header .cal-nav {
+      background: none; border: 1px solid #e0e0e0; width: 36px; height: 36px;
+      border-radius: 50%; cursor: pointer; font-size: 1rem; color: var(--text-mid);
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .calendar-header .cal-nav:hover { background: var(--sage-pale); border-color: var(--sage); color: var(--sage-deep); }
+    .calendar-header .cal-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+    .calendar-header .cal-nav:disabled:hover { background: none; border-color: #e0e0e0; color: var(--text-mid); }
+    .calendar-title {
+      font-size: 1.05rem; font-weight: 600; color: var(--text-dark);
+    }
+    .calendar-dow {
+      display: grid; grid-template-columns: repeat(7, 1fr); text-align: center;
+      margin-bottom: 8px;
+    }
+    .calendar-dow span {
+      font-size: 0.8rem; font-weight: 600; color: var(--text-light); padding: 4px 0;
+    }
+    .calendar-dow span:first-child { color: #D4726A; }
+    .calendar-dow span:last-child { color: #5B8AC4; }
+    .calendar-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+    }
+    .calendar-day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      border: none; background: none; border-radius: 50%; font-size: 0.9rem;
+      color: var(--text-dark); cursor: pointer; transition: var(--transition);
+      font-family: 'Noto Sans KR', sans-serif; font-weight: 500;
+    }
+    .calendar-day:hover:not(.disabled):not(.empty) { background: var(--sage-pale); }
+    .calendar-day.today {
+      border: 2px solid var(--sage); font-weight: 700;
+    }
+    .calendar-day.selected {
+      background: var(--sage-deep); color: white; font-weight: 700;
+    }
+    .calendar-day.selected:hover { background: var(--sage); }
+    .calendar-day.disabled {
+      color: #ccc; cursor: default;
+    }
+    .calendar-day.empty { cursor: default; }
+    .calendar-day.sun { color: #D4726A; }
+    .calendar-day.sat { color: #5B8AC4; }
+    .calendar-day.sun.disabled, .calendar-day.sat.disabled { opacity: 0.4; }
+    .calendar-day.selected.sun, .calendar-day.selected.sat { color: white; }
+    .time-slots-section {
+      margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0;
+      display: none;
+    }
+    .time-slots-section.show { display: block; }
+    .time-slots-label {
+      font-size: 0.85rem; font-weight: 600; color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+    .time-slots {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .time-slot {
+      padding: 8px 16px; border: 1px solid #e0e0e0; background: white;
+      border-radius: 20px; font-size: 0.85rem; color: var(--text-mid);
+      cursor: pointer; transition: var(--transition);
+      font-family: 'Noto Sans KR', sans-serif; font-weight: 500;
+    }
+    .time-slot:hover { border-color: var(--sage); color: var(--sage-deep); background: var(--sage-ghost); }
+    .time-slot.selected {
+      background: var(--sage-deep); color: white; border-color: var(--sage-deep);
+    }
+    .time-slot.selected:hover { background: var(--sage); border-color: var(--sage); }
+    .calendar-selected {
+      margin-top: 12px; padding: 10px 14px; background: rgba(127,166,139,0.1);
+      border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--sage-deep);
+      font-weight: 500; display: none; align-items: center; justify-content: space-between;
+    }
+    .calendar-selected.show { display: flex; }
+    .calendar-clear {
+      background: none; border: none; color: var(--text-light); cursor: pointer;
+      font-size: 0.85rem; text-decoration: underline;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .calendar-clear:hover { color: var(--text-mid); }
+
     .payment-info { margin-top: 32px; padding-top: 28px; border-top: 2px solid rgba(127,166,139,0.2); }
     .payment-title { font-size: 1.1rem; font-weight: 600; color: var(--sage-deep); margin-bottom: 16px; }
     .payment-box { background: white; border-radius: var(--radius-sm); padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 3px solid var(--sage); }
@@ -544,6 +635,10 @@
       .answer-options { flex-direction: column; }
       .answer-btn { min-width: 100%; }
       .booking-form { padding: 28px 20px; }
+      .calendar-wrapper { padding: 14px; }
+      .calendar-day { font-size: 0.8rem; }
+      .time-slot { padding: 6px 12px; font-size: 0.8rem; }
+      .calendar-selected { font-size: 0.83rem; flex-direction: column; gap: 8px; text-align: center; }
       .footer-links { flex-direction: column; gap: 24px; }
       .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
     }
@@ -851,7 +946,26 @@
           </div>
           <div class="form-group full">
             <label class="form-label">희망 상담 일시 (선택)</label>
-            <input type="text" id="bookingDate" placeholder="예: 평일 오후, 토요일 오전 등">
+            <input type="hidden" id="bookingDate">
+            <div class="calendar-wrapper" id="calendarWrapper">
+              <div class="calendar-header">
+                <button type="button" class="cal-nav" id="calPrev">&#9664;</button>
+                <span class="calendar-title" id="calTitle"></span>
+                <button type="button" class="cal-nav" id="calNext">&#9654;</button>
+              </div>
+              <div class="calendar-dow">
+                <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+              </div>
+              <div class="calendar-grid" id="calGrid"></div>
+              <div class="time-slots-section" id="timeSlotsSection">
+                <div class="time-slots-label">시간 선택</div>
+                <div class="time-slots" id="timeSlots"></div>
+              </div>
+              <div class="calendar-selected" id="calSelected">
+                <span id="calSelectedText"></span>
+                <button type="button" class="calendar-clear" id="calClear">초기화</button>
+              </div>
+            </div>
           </div>
           <div class="privacy-check">
             <label>
@@ -1664,6 +1778,177 @@
       var btn = document.getElementById('bookingSubmit');
       var result = document.getElementById('bookingResult');
 
+      // ===== CALENDAR =====
+      var now = new Date();
+      var calYear = now.getFullYear();
+      var calMonth = now.getMonth();
+      var selectedDate = null;
+      var selectedTime = null;
+
+      var calGrid = document.getElementById('calGrid');
+      var calTitle = document.getElementById('calTitle');
+      var calPrev = document.getElementById('calPrev');
+      var calNext = document.getElementById('calNext');
+      var timeSlotsSection = document.getElementById('timeSlotsSection');
+      var timeSlots = document.getElementById('timeSlots');
+      var calSelected = document.getElementById('calSelected');
+      var calSelectedText = document.getElementById('calSelectedText');
+      var calClear = document.getElementById('calClear');
+      var bookingDateInput = document.getElementById('bookingDate');
+
+      var dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+      var timeOptions = [
+        { label: '오전 10:00', value: '오전 10:00' },
+        { label: '오전 11:00', value: '오전 11:00' },
+        { label: '오후 1:00', value: '오후 1:00' },
+        { label: '오후 2:00', value: '오후 2:00' },
+        { label: '오후 3:00', value: '오후 3:00' },
+        { label: '오후 4:00', value: '오후 4:00' },
+        { label: '오후 5:00', value: '오후 5:00' }
+      ];
+
+      function renderCalendar() {
+        calTitle.textContent = calYear + '년 ' + (calMonth + 1) + '월';
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        var firstDay = new Date(calYear, calMonth, 1).getDay();
+        var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+        // Disable prev button if current month
+        var nowMonth = new Date();
+        if (calYear === nowMonth.getFullYear() && calMonth === nowMonth.getMonth()) {
+          calPrev.disabled = true;
+        } else {
+          calPrev.disabled = false;
+        }
+
+        var html = '';
+        // Empty cells before first day
+        for (var e = 0; e < firstDay; e++) {
+          html += '<button type="button" class="calendar-day empty" disabled></button>';
+        }
+        for (var d = 1; d <= daysInMonth; d++) {
+          var date = new Date(calYear, calMonth, d);
+          date.setHours(0, 0, 0, 0);
+          var dow = date.getDay();
+          var classes = 'calendar-day';
+          var disabled = false;
+
+          if (date < today) {
+            classes += ' disabled';
+            disabled = true;
+          }
+          if (date.getTime() === today.getTime()) {
+            classes += ' today';
+          }
+          if (selectedDate && date.getTime() === selectedDate.getTime()) {
+            classes += ' selected';
+          }
+          if (dow === 0) classes += ' sun';
+          if (dow === 6) classes += ' sat';
+
+          html += '<button type="button" class="' + classes + '"' + (disabled ? ' disabled' : '') + ' data-date="' + calYear + '-' + (calMonth + 1) + '-' + d + '">' + d + '</button>';
+        }
+        calGrid.innerHTML = html;
+
+        // Attach click events
+        var dayBtns = calGrid.querySelectorAll('.calendar-day:not(.disabled):not(.empty)');
+        for (var i = 0; i < dayBtns.length; i++) {
+          dayBtns[i].addEventListener('click', function() {
+            var parts = this.getAttribute('data-date').split('-');
+            selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            selectedDate.setHours(0, 0, 0, 0);
+            selectedTime = null;
+            renderCalendar();
+            showTimeSlots();
+            updateBookingDate();
+          });
+        }
+      }
+
+      function showTimeSlots() {
+        if (!selectedDate) {
+          timeSlotsSection.classList.remove('show');
+          return;
+        }
+        timeSlotsSection.classList.add('show');
+        var html = '';
+        for (var t = 0; t < timeOptions.length; t++) {
+          var cls = 'time-slot';
+          if (selectedTime === timeOptions[t].value) cls += ' selected';
+          html += '<button type="button" class="' + cls + '" data-time="' + timeOptions[t].value + '">' + timeOptions[t].label + '</button>';
+        }
+        timeSlots.innerHTML = html;
+
+        var slotBtns = timeSlots.querySelectorAll('.time-slot');
+        for (var s = 0; s < slotBtns.length; s++) {
+          slotBtns[s].addEventListener('click', function() {
+            selectedTime = this.getAttribute('data-time');
+            showTimeSlots();
+            updateBookingDate();
+          });
+        }
+      }
+
+      function updateBookingDate() {
+        if (!selectedDate) {
+          bookingDateInput.value = '';
+          calSelected.classList.remove('show');
+          return;
+        }
+        var y = selectedDate.getFullYear();
+        var m = selectedDate.getMonth() + 1;
+        var d = selectedDate.getDate();
+        var dow = dayNames[selectedDate.getDay()];
+        var text = y + '년 ' + m + '월 ' + d + '일 (' + dow + ')';
+        if (selectedTime) {
+          text += ' ' + selectedTime;
+        }
+        bookingDateInput.value = text;
+        calSelectedText.textContent = text;
+        calSelected.classList.add('show');
+      }
+
+      calPrev.addEventListener('click', function() {
+        calMonth--;
+        if (calMonth < 0) { calMonth = 11; calYear--; }
+        renderCalendar();
+        showTimeSlots();
+      });
+
+      calNext.addEventListener('click', function() {
+        calMonth++;
+        if (calMonth > 11) { calMonth = 0; calYear++; }
+        renderCalendar();
+        showTimeSlots();
+      });
+
+      calClear.addEventListener('click', function() {
+        selectedDate = null;
+        selectedTime = null;
+        bookingDateInput.value = '';
+        calSelected.classList.remove('show');
+        timeSlotsSection.classList.remove('show');
+        renderCalendar();
+      });
+
+      function resetCalendar() {
+        var n = new Date();
+        calYear = n.getFullYear();
+        calMonth = n.getMonth();
+        selectedDate = null;
+        selectedTime = null;
+        bookingDateInput.value = '';
+        calSelected.classList.remove('show');
+        timeSlotsSection.classList.remove('show');
+        renderCalendar();
+      }
+
+      // Initialize calendar
+      renderCalendar();
+
+      // ===== FORM SUBMIT =====
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         if (!document.getElementById('privacyAgree').checked) {
@@ -1692,6 +1977,7 @@
         })
         .then(function() {
           form.reset();
+          resetCalendar();
           result.innerHTML = '<div class="booking-success">감사합니다! 상담 예약 신청이 접수되었습니다. 빠른 시일 내에 연락드리겠습니다. &#127807;</div>';
         })
         .catch(function() { alert('전송에 실패했습니다. 다시 시도해주세요.'); })
