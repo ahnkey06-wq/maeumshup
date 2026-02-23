@@ -1856,12 +1856,44 @@
     // ===== AVAILABILITY DATA =====
     var availabilityData = {};
     var AVAILABILITY_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6qK0Ged0rsPfDxYLyKTQxp7IYLsiRc6gAnNkC1LeWkn9HQ1SJylVBYi9MA3jbj60w/exec';
+    function normalizeAvailability(raw) {
+      var result = {};
+      for (var dateStr in raw) {
+        var dk = dateStr;
+        // If dateStr looks like a Date toString (e.g. "Wed Feb 25 2026 ...")
+        if (dateStr.length > 10 && dateStr.indexOf('GMT') > -1) {
+          var d = new Date(dateStr);
+          if (!isNaN(d.getTime())) {
+            dk = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+          }
+        }
+        result[dk] = {};
+        var slots = raw[dateStr];
+        for (var timeStr in slots) {
+          var tk = timeStr;
+          // If timeStr looks like a Date toString (e.g. "Sat Dec 30 1899 10:00:00 ...")
+          if (timeStr.length > 10 && timeStr.indexOf('GMT') > -1) {
+            var t = new Date(timeStr);
+            if (!isNaN(t.getTime())) {
+              var h = t.getHours();
+              var m = String(t.getMinutes()).padStart(2, '0');
+              if (h < 12) { tk = '오전 ' + h + ':' + m; }
+              else if (h === 12) { tk = '오후 12:' + m; }
+              else { tk = '오후 ' + (h - 12) + ':' + m; }
+            }
+          }
+          result[dk][tk] = slots[timeStr];
+        }
+      }
+      return result;
+    }
+
     (function() {
       fetch(AVAILABILITY_SCRIPT_URL + '?action=availability')
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data && data.availability) {
-            availabilityData = data.availability;
+            availabilityData = normalizeAvailability(data.availability);
             if (typeof window._refreshPublicCalendar === 'function') window._refreshPublicCalendar();
           }
         })
