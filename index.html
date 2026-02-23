@@ -730,6 +730,7 @@
         <button class="test-tab" data-test="pss">&#128548; 스트레스 (PSS-14)</button>
         <button class="test-tab" data-test="vark">&#128218; 학습유형 (VARK)</button>
         <button class="test-tab" data-test="sct">&#9997;&#65039; 문장완성 (SCT)</button>
+        <button class="test-tab" data-test="mbti">&#127752; MBTI 성격유형</button>
       </div>
 
       <div class="test-container fade-up">
@@ -784,6 +785,15 @@
             <button class="test-submit-btn" onclick="submitSct()">&#128228; 검사 결과 제출하기</button>
           </div>
           <div class="test-result" id="sct-result"></div>
+        </div>
+        <div class="test-panel" id="test-mbti">
+          <div class="test-intro">
+            <h3>MBTI 성격유형 검사</h3>
+            <p>각 질문에서 자신에게 더 가까운 것을 선택해 주세요. (총 20문항)</p>
+          </div>
+          <div id="mbti-questions"></div>
+          <button class="test-submit-btn" onclick="calculateMbti()">결과 확인하기</button>
+          <div class="test-result" id="mbti-result"></div>
         </div>
       </div>
     </div>
@@ -1497,6 +1507,105 @@
       resultDiv.classList.add('show');
       resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+
+    // ===== MBTI TEST =====
+    (function() {
+      var mbtiQuestions = [
+        { q: '모임이나 파티에서 나는...', a: '여러 사람과 어울리며 에너지를 얻는다', b: '소수의 친한 사람과 깊은 대화를 선호한다', dim: 'EI' },
+        { q: '주말에 충전하는 방법은?', a: '친구들과 만나서 활동하기', b: '혼자만의 시간을 갖기', dim: 'EI' },
+        { q: '새로운 사람을 만날 때 나는...', a: '먼저 다가가서 말을 건다', b: '상대가 먼저 말을 걸어주길 기다린다', dim: 'EI' },
+        { q: '생각을 정리할 때 나는...', a: '다른 사람과 이야기하면서 정리한다', b: '혼자 조용히 생각하면서 정리한다', dim: 'EI' },
+        { q: '전화가 왔을 때 나는...', a: '바로 받는 편이다', b: '가능하면 문자로 대체하고 싶다', dim: 'EI' },
+        { q: '새로운 것을 배울 때 나는...', a: '구체적인 사실과 세부사항에 집중한다', b: '전체적인 개념과 가능성에 집중한다', dim: 'SN' },
+        { q: '나는 주로...', a: '현재와 현실에 초점을 맞춘다', b: '미래와 가능성에 초점을 맞춘다', dim: 'SN' },
+        { q: '설명서를 읽을 때 나는...', a: '단계별로 순서대로 따라한다', b: '전체를 훑어보고 핵심만 파악한다', dim: 'SN' },
+        { q: '나에게 더 중요한 것은...', a: '실제 경험과 검증된 사실', b: '직감과 영감, 새로운 아이디어', dim: 'SN' },
+        { q: '대화할 때 나는...', a: '구체적이고 정확한 표현을 선호한다', b: '비유적이고 추상적인 표현도 좋아한다', dim: 'SN' },
+        { q: '중요한 결정을 내릴 때 나는...', a: '논리와 객관적 사실을 기준으로 판단한다', b: '관련된 사람들의 감정과 가치를 고려한다', dim: 'TF' },
+        { q: '갈등 상황에서 나는...', a: '공정한 해결책을 찾는 것이 중요하다', b: '모두의 감정을 고려하는 것이 중요하다', dim: 'TF' },
+        { q: '친구가 고민을 이야기할 때 나는...', a: '해결책이나 조언을 먼저 제시한다', b: '공감하고 감정을 들어주는 것을 먼저 한다', dim: 'TF' },
+        { q: '비판을 받았을 때 나는...', a: '내용이 맞는지 객관적으로 분석한다', b: '감정적으로 상처를 받는 편이다', dim: 'TF' },
+        { q: '칭찬할 때 나는...', a: '성과와 능력을 인정해 준다', b: '노력과 마음을 알아주는 말을 한다', dim: 'TF' },
+        { q: '여행을 갈 때 나는...', a: '세부 일정을 미리 계획한다', b: '그때그때 유연하게 결정한다', dim: 'JP' },
+        { q: '과제나 업무를 할 때 나는...', a: '마감일 전에 미리 끝내는 편이다', b: '마감에 가까워져야 집중이 잘 된다', dim: 'JP' },
+        { q: '나의 책상이나 방은...', a: '정리정돈이 잘 되어 있다', b: '자유롭고 약간 어수선한 편이다', dim: 'JP' },
+        { q: '계획이 갑자기 바뀌면 나는...', a: '불편하고 스트레스를 받는다', b: '새로운 가능성에 흥미를 느낀다', dim: 'JP' },
+        { q: '하루의 일과는...', a: '규칙적이고 예측 가능한 것이 좋다', b: '변화가 있고 즉흥적인 것이 좋다', dim: 'JP' }
+      ];
+
+      var mbtiTypes = {
+        'ISTJ': { title: '청렴결백한 논리주의자', desc: '책임감이 강하고 신뢰할 수 있는 사람입니다. 체계적이고 꼼꼼하며, 한번 시작한 일은 끝까지 해내는 끈기가 있습니다. 전통과 규칙을 중시하며, 실질적이고 현실적인 접근을 선호합니다.' },
+        'ISFJ': { title: '용감한 수호자', desc: '따뜻하고 헌신적인 보호자입니다. 타인의 감정에 민감하고, 조용히 뒤에서 도움을 주는 것을 좋아합니다. 세심하고 인내심이 강하며, 안정적인 환경을 선호합니다.' },
+        'INFJ': { title: '선의의 옹호자', desc: '이상주의적이고 통찰력이 뛰어난 사람입니다. 깊은 내면의 가치를 중시하며, 다른 사람들을 돕고 세상을 더 나은 곳으로 만들고 싶어합니다. 조용하지만 강한 신념을 가지고 있습니다.' },
+        'INTJ': { title: '용의주도한 전략가', desc: '독립적이고 전략적인 사고를 하는 사람입니다. 높은 기준을 가지고 있으며, 장기적인 비전을 세우고 이를 체계적으로 실행합니다. 지적 호기심이 강하고 끊임없이 개선을 추구합니다.' },
+        'ISTP': { title: '만능 재주꾼', desc: '논리적이면서도 융통성 있는 실용주의자입니다. 문제 해결에 뛰어나며, 도구나 기계를 다루는 것을 좋아합니다. 조용하고 관찰력이 뛰어나며, 필요할 때 빠르게 행동합니다.' },
+        'ISFP': { title: '호기심 많은 예술가', desc: '온화하고 감성적인 예술가 기질을 가진 사람입니다. 자유로운 영혼으로 현재의 순간을 중시하며, 자신만의 가치관에 따라 살아갑니다. 겸손하고 배려심이 깊습니다.' },
+        'INFP': { title: '열정적인 중재자', desc: '이상주의적이고 공감 능력이 뛰어난 사람입니다. 내면에 깊은 감정과 가치를 품고 있으며, 진정성과 의미 있는 관계를 추구합니다. 창의적이며 글쓰기 등 자기표현에 재능이 있습니다.' },
+        'INTP': { title: '논리적인 사색가', desc: '지적 호기심이 매우 강한 분석가입니다. 복잡한 이론과 아이디어를 탐구하는 것을 좋아하며, 독창적인 사고를 합니다. 논리적이고 객관적이며, 지식 추구에 열정적입니다.' },
+        'ESTP': { title: '모험을 즐기는 사업가', desc: '활동적이고 현실적인 문제 해결사입니다. 위험을 감수하는 것을 두려워하지 않으며, 즉각적인 결과를 선호합니다. 사교적이고 유머 감각이 뛰어나며, 순간의 즐거움을 중시합니다.' },
+        'ESFP': { title: '자유로운 영혼의 연예인', desc: '활기차고 즐거움을 추구하는 사람입니다. 주변 사람들과 어울리는 것을 좋아하며, 밝은 에너지로 분위기를 만듭니다. 현실적이면서도 유연하고, 삶을 즐기는 법을 아는 사람입니다.' },
+        'ENFP': { title: '재기발랄한 활동가', desc: '열정적이고 창의적인 자유로운 영혼입니다. 새로운 가능성에 흥분하며, 사람들과 깊이 있는 관계를 맺고 싶어합니다. 낙관적이고 영감을 주는 존재이며, 다양한 관심사를 가지고 있습니다.' },
+        'ENTP': { title: '뜨거운 논쟁을 즐기는 변론가', desc: '지적이고 창의적인 도전자입니다. 토론과 논쟁을 즐기며, 기존의 틀을 깨는 혁신적인 아이디어를 냅니다. 빠른 사고력과 넓은 관심 분야를 가지고 있으며, 새로운 가능성을 탐구합니다.' },
+        'ESTJ': { title: '엄격한 관리자', desc: '질서와 원칙을 중시하는 리더입니다. 체계적이고 효율적으로 일을 처리하며, 책임감이 강합니다. 결단력 있고 실행력이 뛰어나며, 조직을 이끄는 능력이 탁월합니다.' },
+        'ESFJ': { title: '사교적인 외교관', desc: '다정하고 사교적인 사람입니다. 다른 사람의 필요를 잘 알아차리고, 화목한 분위기를 만드는 데 뛰어납니다. 책임감 있고 충실하며, 전통과 조화를 소중히 여깁니다.' },
+        'ENFJ': { title: '정의로운 사회운동가', desc: '카리스마 있고 영감을 주는 리더입니다. 다른 사람들의 잠재력을 발견하고 끌어내는 능력이 뛰어납니다. 공감 능력이 높고, 더 나은 세상을 위해 헌신합니다.' },
+        'ENTJ': { title: '대담한 통솔자', desc: '강한 의지력과 리더십을 가진 사람입니다. 효율적으로 목표를 달성하는 것을 중시하며, 전략적 사고와 결단력이 뛰어납니다. 도전을 두려워하지 않으며, 큰 그림을 그리는 능력이 있습니다.' }
+      };
+
+      var qContainer = document.getElementById('mbti-questions');
+      var html = '';
+      for (var i = 0; i < mbtiQuestions.length; i++) {
+        var mq = mbtiQuestions[i];
+        html += '<div class="test-question"><p class="q-number">' + (i+1) + '. ' + mq.q + '</p>';
+        html += '<div class="q-options">';
+        html += '<label class="q-option"><input type="radio" name="mbti-' + i + '" value="a"> ' + mq.a + '</label>';
+        html += '<label class="q-option"><input type="radio" name="mbti-' + i + '" value="b"> ' + mq.b + '</label>';
+        html += '</div></div>';
+      }
+      qContainer.innerHTML = html;
+
+      window.calculateMbti = function() {
+        var scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+        var answered = 0;
+        for (var i = 0; i < mbtiQuestions.length; i++) {
+          var selected = document.querySelector('input[name="mbti-' + i + '"]:checked');
+          if (selected) {
+            answered++;
+            var dim = mbtiQuestions[i].dim;
+            if (selected.value === 'a') { scores[dim[0]]++; }
+            else { scores[dim[1]]++; }
+          }
+        }
+        if (answered < mbtiQuestions.length) {
+          alert('모든 문항에 답해 주세요. (' + answered + '/' + mbtiQuestions.length + ')');
+          return;
+        }
+        var type = '';
+        type += (scores.E >= scores.I) ? 'E' : 'I';
+        type += (scores.S >= scores.N) ? 'S' : 'N';
+        type += (scores.T >= scores.F) ? 'T' : 'F';
+        type += (scores.J >= scores.P) ? 'J' : 'P';
+
+        var info = mbtiTypes[type];
+        var resultDiv = document.getElementById('mbti-result');
+        var rhtml = '<div class="result-header"><h3>&#127752; 당신의 MBTI 유형: ' + type + '</h3>';
+        rhtml += '<p class="result-type-title">' + info.title + '</p></div>';
+        rhtml += '<div class="result-body">';
+        rhtml += '<div class="result-section"><h4>성격 설명</h4><p>' + info.desc + '</p></div>';
+        rhtml += '<div class="result-section"><h4>각 차원별 결과</h4>';
+        rhtml += '<p><strong>에너지 방향:</strong> 외향(E) ' + scores.E + ' vs 내향(I) ' + scores.I + '</p>';
+        rhtml += '<p><strong>인식 기능:</strong> 감각(S) ' + scores.S + ' vs 직관(N) ' + scores.N + '</p>';
+        rhtml += '<p><strong>판단 기능:</strong> 사고(T) ' + scores.T + ' vs 감정(F) ' + scores.F + '</p>';
+        rhtml += '<p><strong>생활 양식:</strong> 판단(J) ' + scores.J + ' vs 인식(P) ' + scores.P + '</p>';
+        rhtml += '</div></div>';
+        rhtml += '<div class="result-recommendation"><p>&#128161; MBTI는 자신과 타인을 이해하는 도구입니다. 전문 상담을 통해 자신의 성격 유형을 더 깊이 이해하고, 대인관계 및 진로에 활용해 보세요.</p></div>';
+        rhtml += '<a href="#booking" class="result-cta">&#127807; 성격유형 상담 예약하기</a>';
+
+        resultDiv.innerHTML = rhtml;
+        resultDiv.classList.add('show');
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+    })();
 
     // ===== TAB SWITCHING =====
     var tabs = document.querySelectorAll('.test-tab');
