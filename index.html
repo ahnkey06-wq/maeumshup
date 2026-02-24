@@ -2224,11 +2224,31 @@
       return availabilityData[dateKey][timeValue];
     }
 
+    function parseSlotHourGlobal(timeValue) {
+      var parts = timeValue.split(' ');
+      var period = parts[0];
+      var timeParts = parts[1].split(':');
+      var hour = parseInt(timeParts[0]);
+      if (period === '오후' && hour !== 12) hour += 12;
+      if (period === '오전' && hour === 12) hour = 0;
+      return hour;
+    }
+
     function isDateFullyUnavailable(dateKey) {
-      if (!availabilityData[dateKey]) return false;
       var allTimes = ['오전 10:00', '오전 11:00', '오후 1:00', '오후 2:00', '오후 3:00', '오후 4:00', '오후 5:00'];
+      // 오늘 날짜인지 확인
+      var now = new Date();
+      var todayKey = getDateKey(now.getFullYear(), now.getMonth(), now.getDate());
+      var isToday = (dateKey === todayKey);
+      var currentHour = now.getHours();
+
       for (var i = 0; i < allTimes.length; i++) {
-        if (isSlotAvailable(dateKey, allTimes[i])) return false;
+        var available = isSlotAvailable(dateKey, allTimes[i]);
+        if (available && isToday) {
+          var slotHour = parseSlotHourGlobal(allTimes[i]);
+          if (slotHour <= currentHour) available = false;
+        }
+        if (available) return false;
       }
       return true;
     }
@@ -2335,6 +2355,17 @@
         }
       }
 
+      function parseSlotHour(timeValue) {
+        // '오전 10:00' -> 10, '오후 1:00' -> 13, '오후 12:00' -> 12
+        var parts = timeValue.split(' ');
+        var period = parts[0]; // 오전 or 오후
+        var timeParts = parts[1].split(':');
+        var hour = parseInt(timeParts[0]);
+        if (period === '오후' && hour !== 12) hour += 12;
+        if (period === '오전' && hour === 12) hour = 0;
+        return hour;
+      }
+
       function showTimeSlots() {
         if (!selectedDate) {
           timeSlotsSection.classList.remove('show');
@@ -2342,10 +2373,25 @@
         }
         timeSlotsSection.classList.add('show');
         var dk = getDateKey(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+
+        // 오늘 날짜인지 확인
+        var now = new Date();
+        var isToday = selectedDate.getFullYear() === now.getFullYear()
+          && selectedDate.getMonth() === now.getMonth()
+          && selectedDate.getDate() === now.getDate();
+        var currentHour = now.getHours();
+
         var html = '';
         for (var t = 0; t < timeOptions.length; t++) {
           var cls = 'time-slot';
           var slotDisabled = !isSlotAvailable(dk, timeOptions[t].value);
+          // 오늘이면 이미 지난 시간은 비활성화
+          if (!slotDisabled && isToday) {
+            var slotHour = parseSlotHour(timeOptions[t].value);
+            if (slotHour <= currentHour) {
+              slotDisabled = true;
+            }
+          }
           if (slotDisabled) {
             cls += ' unavailable';
           } else if (selectedTime === timeOptions[t].value) {
