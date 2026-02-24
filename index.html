@@ -701,6 +701,163 @@
       .footer-links { flex-direction: column; gap: 24px; }
       .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
     }
+
+    /* ===== GUESTBOOK ===== */
+    #guestbook { background: var(--sage-ghost); }
+    .gb-form {
+      max-width: 600px; margin: 0 auto 40px; background: #fff;
+      border-radius: var(--radius); padding: 32px;
+      box-shadow: var(--shadow-soft);
+    }
+    .gb-form-group { margin-bottom: 18px; }
+    .gb-form-group label {
+      display: block; font-size: 0.85rem; font-weight: 600;
+      color: var(--text-dark); margin-bottom: 6px;
+    }
+    .gb-form-group input,
+    .gb-form-group textarea {
+      width: 100%; padding: 12px 16px; border: 1px solid var(--sage-pale);
+      border-radius: var(--radius-sm); font-size: 0.95rem; font-family: inherit;
+      color: var(--text-dark); background: var(--sage-ghost);
+      transition: var(--transition); resize: vertical;
+    }
+    .gb-form-group input:focus,
+    .gb-form-group textarea:focus {
+      outline: none; border-color: var(--sage);
+      box-shadow: 0 0 0 3px rgba(127,166,139,0.15);
+    }
+    .gb-submit-btn {
+      width: 100%; padding: 14px; background: var(--sage-deep); color: #fff;
+      border: none; border-radius: var(--radius-sm); font-size: 1rem;
+      font-weight: 600; cursor: pointer; transition: var(--transition);
+    }
+    .gb-submit-btn:hover { background: #4A6A59; transform: translateY(-1px); }
+    .gb-msg {
+      margin-top: 12px; padding: 12px 16px; border-radius: var(--radius-sm);
+      font-size: 0.9rem; text-align: center;
+    }
+    .gb-public-entries {
+      display: flex; flex-direction: column; gap: 16px;
+      max-width: 700px; margin: 0 auto 40px;
+    }
+    .gb-entry {
+      background: #fff; border-radius: var(--radius); padding: 24px;
+      box-shadow: var(--shadow-soft); transition: var(--transition);
+    }
+    .gb-entry:hover { box-shadow: var(--shadow-medium); }
+    .gb-entry-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
+    }
+    .gb-entry-name {
+      font-weight: 600; color: var(--text-dark); font-size: 1rem;
+    }
+    .gb-entry-date {
+      font-size: 0.8rem; color: var(--text-light);
+    }
+    .gb-entry-text {
+      font-size: 0.95rem; color: var(--text-mid); line-height: 1.7;
+    }
+    .gb-entry-reply {
+      margin-top: 14px; padding: 14px 16px; background: var(--sage-ghost);
+      border-radius: var(--radius-sm); border-left: 3px solid var(--sage);
+    }
+    .gb-reply-header {
+      font-size: 0.8rem; font-weight: 600; color: var(--sage-deep);
+      margin-bottom: 6px;
+    }
+    .gb-reply-text {
+      font-size: 0.9rem; color: var(--text-mid); line-height: 1.6;
+    }
+    .gb-empty {
+      text-align: center; padding: 48px 20px; color: var(--text-light);
+      font-size: 0.95rem; line-height: 1.8;
+    }
+    .gb-gate {
+      max-width: 500px; margin: 0 auto; text-align: center;
+      background: #fff; border-radius: var(--radius); padding: 36px;
+      box-shadow: var(--shadow-soft);
+    }
+    .gb-gate-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .gb-gate p {
+      color: var(--text-light); font-size: 0.9rem; margin-bottom: 20px;
+    }
+    .gb-gate-form {
+      display: flex; gap: 10px; justify-content: center; max-width: 360px;
+      margin: 0 auto;
+    }
+    .gb-gate-form input {
+      flex: 1; padding: 12px 16px; border: 1px solid var(--sage-pale);
+      border-radius: var(--radius-sm); font-size: 0.95rem;
+      background: var(--sage-ghost); transition: var(--transition);
+    }
+    .gb-gate-form input:focus {
+      outline: none; border-color: var(--sage);
+      box-shadow: 0 0 0 3px rgba(127,166,139,0.15);
+    }
+    .gb-gate-btn {
+      padding: 12px 24px; background: var(--sage-deep); color: #fff;
+      border: none; border-radius: var(--radius-sm); font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; transition: var(--transition);
+      white-space: nowrap;
+    }
+    .gb-gate-btn:hover { background: #4A6A59; }
+    .gb-gate-error {
+      margin-top: 12px; color: #D4726A; font-size: 0.85rem;
+    }
+    #gbAdminPanel {
+      max-width: 700px; margin: 0 auto; padding-top: 20px;
+    }
+    #gbAdminPanel h3 {
+      font-size: 1.2rem; color: var(--text-dark); font-weight: 700;
+    }
+    .gb-admin-entry {
+      background: #fff; border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow-soft); margin-bottom: 14px;
+    }
+    .gb-admin-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px;
+    }
+    .gb-admin-name {
+      font-weight: 600; color: var(--text-dark); font-size: 0.95rem;
+    }
+    .gb-status-badge {
+      font-size: 0.7rem; padding: 3px 10px; border-radius: 20px;
+      font-weight: 600; margin-left: 8px;
+    }
+    .gb-status-badge.approved {
+      background: #D4E4DA; color: #2D6A4F;
+    }
+    .gb-status-badge.pending {
+      background: #FEF3C7; color: #92400E;
+    }
+    .gb-admin-text {
+      font-size: 0.9rem; color: var(--text-mid); line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .gb-admin-actions {
+      display: flex; gap: 8px; padding-top: 10px;
+      border-top: 1px solid var(--sage-pale);
+    }
+    .gb-admin-actions button {
+      font-size: 0.8rem; padding: 6px 16px; border: none;
+      border-radius: var(--radius-sm); font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .gb-btn-approve { background: var(--sage); color: #fff; }
+    .gb-btn-approve:hover { background: var(--sage-deep); }
+    .gb-btn-unapprove { background: #F59E0B; color: #fff; }
+    .gb-btn-unapprove:hover { background: #D97706; }
+    .gb-btn-delete { background: #EF4444; color: #fff; }
+    .gb-btn-delete:hover { background: #DC2626; }
+
+    @media (max-width: 768px) {
+      .gb-form { padding: 24px 18px; }
+      .gb-gate { padding: 28px 18px; }
+      .gb-gate-form { flex-direction: column; }
+      .gb-entry { padding: 18px; }
+    }
   </style>
 </head>
 <body>
@@ -715,6 +872,7 @@
         <li><a href="#programs">프로그램</a></li>
         <li><a href="#diagnosis">자가진단</a></li>
         <li><a href="#booking">예약/문의</a></li>
+        <li><a href="#guestbook">방명록</a></li>
       </ul>
       <button class="mobile-toggle" id="mobileToggle">&#9776;</button>
     </div>
@@ -1080,6 +1238,51 @@
     </div>
   </section>
 
+  <!-- ===== GUESTBOOK ===== -->
+  <section id="guestbook">
+    <div class="section-inner">
+      <div class="section-header fade-up">
+        <span class="section-icon">&#128221;</span>
+        <p class="section-label">GUESTBOOK</p>
+        <h2>방명록</h2>
+        <p class="section-desc">마음숲을 방문해주신 분들의 소중한 이야기</p>
+      </div>
+      <!-- 방명록 작성 폼 -->
+      <div class="gb-form fade-up">
+        <div class="gb-form-group">
+          <label>이름 *</label>
+          <input type="text" id="gbName" placeholder="이름을 입력해주세요" maxlength="20">
+        </div>
+        <div class="gb-form-group">
+          <label>내용 *</label>
+          <textarea id="gbContent" placeholder="방문 소감을 남겨주세요..." maxlength="500" rows="4"></textarea>
+        </div>
+        <button type="button" class="gb-submit-btn" id="gbSubmitBtn">등록하기</button>
+        <div class="gb-msg" id="gbMsg" style="display:none;"></div>
+      </div>
+      <!-- 승인된 방명록 목록 (공개) -->
+      <div class="gb-public-entries fade-up" id="gbPublicEntries"></div>
+      <div class="gb-empty fade-up" id="gbEmpty" style="display:none;">
+        <p>&#127807; 아직 등록된 방명록이 없습니다.<br>첫 번째 방명록을 남겨주세요!</p>
+      </div>
+      <!-- 관리자 게이트 -->
+      <div class="gb-gate fade-up" id="gbGate">
+        <div class="gb-gate-icon">&#128274;</div>
+        <p>방명록 관리는 관리자 비밀번호가 필요합니다.</p>
+        <div class="gb-gate-form">
+          <input type="password" id="gbGatePw" placeholder="비밀번호 입력">
+          <button type="button" class="gb-gate-btn" id="gbGateBtn">관리하기</button>
+        </div>
+        <div class="gb-gate-error" id="gbGateErr" style="display:none;">비밀번호가 틀렸습니다.</div>
+      </div>
+      <!-- 관리자 패널 (비밀번호 통과 후 표시) -->
+      <div id="gbAdminPanel" style="display:none;">
+        <h3>&#128203; 방명록 관리</h3>
+        <div id="gbAdminList"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== FOOTER ===== -->
   <footer>
     <div class="footer-inner">
@@ -1096,6 +1299,7 @@
             <a href="#programs">프로그램</a>
             <a href="#diagnosis">자가진단</a>
             <a href="#booking">예약/문의</a>
+            <a href="#guestbook">방명록</a>
           </div>
           <div class="footer-link-group footer-emergency">
             <h4>긴급 연락처</h4>
@@ -2570,6 +2774,196 @@
     renderQuestions('pss');
     renderVarkQuestions();
     renderSctQuestions();
+
+    // ===== GUESTBOOK =====
+    (function() {
+      var ADMIN_PASS = '0419';
+      var STORAGE_KEY = 'maeumshup_guestbook';
+      var gbUnlocked = false;
+
+      function escapeHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      function getEntries() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+        catch(e) { return []; }
+      }
+
+      function saveEntries(arr) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+      }
+
+      function formatDate(iso) {
+        var d = new Date(iso);
+        return d.getFullYear() + '.' + (d.getMonth() + 1) + '.' + d.getDate();
+      }
+
+      // --- 공개 방명록 렌더링 (승인된 것만) ---
+      function renderPublicEntries() {
+        var entries = getEntries();
+        var container = document.getElementById('gbPublicEntries');
+        var empty = document.getElementById('gbEmpty');
+        var approved = entries.filter(function(e) { return e.approved; });
+
+        if (approved.length === 0) {
+          container.innerHTML = '';
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
+        var sorted = approved.slice().reverse();
+        var html = '';
+        sorted.forEach(function(entry) {
+          html += '<div class="gb-entry">' +
+            '<div class="gb-entry-header">' +
+            '<span class="gb-entry-name">\uD83D\uDE4F ' + escapeHtml(entry.name) + '</span>' +
+            '<span class="gb-entry-date">' + formatDate(entry.createdAt) + '</span>' +
+            '</div>' +
+            '<div class="gb-entry-text">' + escapeHtml(entry.content).replace(/\n/g, '<br>') + '</div>';
+          if (entry.reply) {
+            html += '<div class="gb-entry-reply">' +
+              '<div class="gb-reply-header">\uD83C\uDF3F \uC0C1\uB2F4\uC0AC \uB2F5\uAE00</div>' +
+              '<div class="gb-reply-text">' + escapeHtml(entry.reply).replace(/\n/g, '<br>') + '</div>' +
+              '</div>';
+          }
+          html += '</div>';
+        });
+        container.innerHTML = html;
+      }
+
+      // --- 방명록 등록 ---
+      document.getElementById('gbSubmitBtn').addEventListener('click', function() {
+        var name = document.getElementById('gbName').value.trim();
+        var content = document.getElementById('gbContent').value.trim();
+        var msgEl = document.getElementById('gbMsg');
+
+        if (!name || !content) {
+          msgEl.textContent = '\uC774\uB984\uACFC \uB0B4\uC6A9\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694.';
+          msgEl.style.display = 'block';
+          msgEl.style.background = '#fef2f2'; msgEl.style.color = '#c64b4b';
+          setTimeout(function() { msgEl.style.display = 'none'; }, 3000);
+          return;
+        }
+        if (content.length > 500) {
+          msgEl.textContent = '\uB0B4\uC6A9\uC740 500\uC790 \uC774\uB0B4\uB85C \uC791\uC131\uD574\uC8FC\uC138\uC694.';
+          msgEl.style.display = 'block';
+          msgEl.style.background = '#fef2f2'; msgEl.style.color = '#c64b4b';
+          setTimeout(function() { msgEl.style.display = 'none'; }, 3000);
+          return;
+        }
+
+        var entries = getEntries();
+        entries.push({
+          id: Date.now().toString(36),
+          name: name,
+          content: content,
+          approved: false,
+          reply: '',
+          createdAt: new Date().toISOString()
+        });
+        saveEntries(entries);
+
+        document.getElementById('gbName').value = '';
+        document.getElementById('gbContent').value = '';
+
+        msgEl.textContent = '\uD83C\uDF3F \uBC29\uBA85\uB85D\uC774 \uB4F1\uB85D\uB418\uC5C8\uC2B5\uB2C8\uB2E4! \uAD00\uB9AC\uC790 \uD655\uC778 \uD6C4 \uACF5\uAC1C\uB429\uB2C8\uB2E4.';
+        msgEl.style.display = 'block';
+        msgEl.style.background = '#f0fdf4'; msgEl.style.color = '#166534';
+        setTimeout(function() { msgEl.style.display = 'none'; }, 4000);
+
+        renderPublicEntries();
+        if (gbUnlocked) renderAdminEntries();
+      });
+
+      // --- 관리자 게이트 ---
+      function handleGbGate() {
+        var pw = document.getElementById('gbGatePw').value;
+        if (pw === ADMIN_PASS) {
+          gbUnlocked = true;
+          document.getElementById('gbGate').style.display = 'none';
+          document.getElementById('gbAdminPanel').style.display = 'block';
+          renderAdminEntries();
+        } else {
+          var err = document.getElementById('gbGateErr');
+          err.style.display = 'block';
+          setTimeout(function() { err.style.display = 'none'; }, 3000);
+        }
+      }
+
+      document.getElementById('gbGateBtn').addEventListener('click', handleGbGate);
+      document.getElementById('gbGatePw').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') handleGbGate();
+      });
+
+      // --- 관리자 목록 렌더링 ---
+      function renderAdminEntries() {
+        var entries = getEntries();
+        var container = document.getElementById('gbAdminList');
+        if (entries.length === 0) {
+          container.innerHTML = '<div style="text-align:center;color:var(--text-light);padding:30px;">\uB4F1\uB85D\uB41C \uBC29\uBA85\uB85D\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.</div>';
+          return;
+        }
+        var sorted = entries.slice().reverse();
+        var html = '';
+        sorted.forEach(function(entry) {
+          var badge = entry.approved
+            ? '<span class="gb-status-badge approved">\u2713 \uC2B9\uC778\uB428</span>'
+            : '<span class="gb-status-badge pending">\u23F3 \uB300\uAE30\uC911</span>';
+          var actions = '<div class="gb-admin-actions">';
+          if (!entry.approved) {
+            actions += '<button type="button" class="gb-btn-approve" onclick="window._msGbApprove(\'' + entry.id + '\')">\uC2B9\uC778</button>';
+          } else {
+            actions += '<button type="button" class="gb-btn-unapprove" onclick="window._msGbUnapprove(\'' + entry.id + '\')">\uC2B9\uC778\uCDE8\uC18C</button>';
+          }
+          actions += '<button type="button" class="gb-btn-delete" onclick="window._msGbDelete(\'' + entry.id + '\')">\uC0AD\uC81C</button>';
+          actions += '</div>';
+
+          html += '<div class="gb-admin-entry">' +
+            '<div class="gb-admin-header">' +
+            '<span class="gb-admin-name">\uD83D\uDE4F ' + escapeHtml(entry.name) + badge + '</span>' +
+            '<span class="gb-entry-date">' + formatDate(entry.createdAt) + '</span>' +
+            '</div>' +
+            '<div class="gb-admin-text">' + escapeHtml(entry.content).replace(/\n/g, '<br>') + '</div>' +
+            actions +
+            '</div>';
+        });
+        container.innerHTML = html;
+      }
+
+      // --- 관리자 액션 (글로벌) ---
+      window._msGbApprove = function(id) {
+        var entries = getEntries();
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].id === id) { entries[i].approved = true; break; }
+        }
+        saveEntries(entries);
+        renderAdminEntries();
+        renderPublicEntries();
+      };
+
+      window._msGbUnapprove = function(id) {
+        var entries = getEntries();
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].id === id) { entries[i].approved = false; break; }
+        }
+        saveEntries(entries);
+        renderAdminEntries();
+        renderPublicEntries();
+      };
+
+      window._msGbDelete = function(id) {
+        if (!confirm('\uC774 \uBC29\uBA85\uB85D\uC744 \uC0AD\uC81C\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?')) return;
+        var entries = getEntries();
+        entries = entries.filter(function(e) { return e.id !== id; });
+        saveEntries(entries);
+        renderAdminEntries();
+        renderPublicEntries();
+      };
+
+      // --- 초기 렌더링 ---
+      renderPublicEntries();
+    })();
 
   </script>
 </body>
